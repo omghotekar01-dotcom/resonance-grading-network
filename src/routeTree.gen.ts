@@ -10,33 +10,95 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppInspectionsRouteImport } from './routes/_app.inspections'
+import { Route as AppMaterialsRouteImport } from './routes/_app.materials'
+import { Route as AppModelsRouteImport } from './routes/_app.models'
+import { Route as AppOverviewRouteImport } from './routes/_app.overview'
+import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppInspectionsRoute = AppInspectionsRouteImport.update({
+  id: '/inspections',
+  path: '/inspections',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMaterialsRoute = AppMaterialsRouteImport.update({
+  id: '/materials',
+  path: '/materials',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppModelsRoute = AppModelsRouteImport.update({
+  id: '/models',
+  path: '/models',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOverviewRoute = AppOverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/inspections': typeof AppInspectionsRoute
+  '/materials': typeof AppMaterialsRoute
+  '/models': typeof AppModelsRoute
+  '/overview': typeof AppOverviewRoute
+  '/settings': typeof AppSettingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/inspections': typeof AppInspectionsRoute
+  '/materials': typeof AppMaterialsRoute
+  '/models': typeof AppModelsRoute
+  '/overview': typeof AppOverviewRoute
+  '/settings': typeof AppSettingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_app/inspections': typeof AppInspectionsRoute
+  '/_app/materials': typeof AppMaterialsRoute
+  '/_app/models': typeof AppModelsRoute
+  '/_app/overview': typeof AppOverviewRoute
+  '/_app/settings': typeof AppSettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/inspections' | '/materials' | '/models' | '/overview' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    '/' | '/inspections' | '/materials' | '/models' | '/overview' | '/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_app/inspections'
+    | '/_app/materials'
+    | '/_app/models'
+    | '/_app/overview'
+    | '/_app/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +110,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/inspections': {
+      id: '/_app/inspections'
+      path: '/inspections'
+      fullPath: '/inspections'
+      preLoaderRoute: typeof AppInspectionsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/materials': {
+      id: '/_app/materials'
+      path: '/materials'
+      fullPath: '/materials'
+      preLoaderRoute: typeof AppMaterialsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/models': {
+      id: '/_app/models'
+      path: '/models'
+      fullPath: '/models'
+      preLoaderRoute: typeof AppModelsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/overview': {
+      id: '/_app/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof AppOverviewRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppInspectionsRoute: typeof AppInspectionsRoute
+  AppMaterialsRoute: typeof AppMaterialsRoute
+  AppModelsRoute: typeof AppModelsRoute
+  AppOverviewRoute: typeof AppOverviewRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppInspectionsRoute: AppInspectionsRoute,
+  AppMaterialsRoute: AppMaterialsRoute,
+  AppModelsRoute: AppModelsRoute,
+  AppOverviewRoute: AppOverviewRoute,
+  AppSettingsRoute: AppSettingsRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
